@@ -5,37 +5,77 @@ export class Game {
   #code;
   #codeCursor;
   #btnValues;
+  #difficulty = "easy";
+  #difficultyKeyboard = "medium";
 
   #codeElement;
   #btnsElement;
   #btns;
   #helpElement;
+  #actionsElement;
 
   constructor(element, btnValues = "0123456789") {
     this.#element = element;
     this.#btnValues = [...btnValues];
 
     this.#createDOM();
-
-    // @TODO: change with random
-    this.setCode("0000");
   }
 
   #createDOM() {
+    this.#actionsElement = document.createElement("div");
+    const difficulties = [
+      { text: "Easy", value: "easy" },
+      { text: "Medium", value: "medium" },
+      { text: "Hard", value: "hard" }
+    ];
+    this.#actionsElement.append("Code difficulty");
+    difficulties.forEach(difficulty => {
+      const btn = document.createElement("button");
+      btn.innerHTML = difficulty.text;
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        this.setRandomCode(difficulty.value);
+      });
+      this.#actionsElement.append(btn);
+    });
+    this.#actionsElement.append("Keyboard difficulty");
+    difficulties.forEach(difficulty => {
+      const btn = document.createElement("button");
+      btn.innerHTML = difficulty.text;
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        this.setKeyboard(difficulty.value);
+      });
+      this.#actionsElement.append(btn);
+    });
+    this.#element.append(this.#actionsElement);
+
     this.#codeElement = document.createElement("div");
     this.#element.append(this.#codeElement);
 
     this.#btnsElement = document.createElement("div");
     this.#element.append(this.#btnsElement);
 
+    this.setKeyboard();
+
+    this.#helpElement = document.createElement("p");
+    this.#helpElement.innerHTML = `Good luck`;
+    this.#element.append(this.#helpElement);
+  }
+
+  #createButtons() {
+    if (Array.isArray(this.#btns)) {
+      this.#btns.forEach(btn => btn.destroy());
+
+      while (this.#btnsElement.firstChild) {
+        this.#btnsElement.firstChild.remove();
+      }
+    }
+
     this.#btns = this.#btnValues.map(
       value => new CodeBtn(value, this.#checkValue)
     );
     this.#btns.forEach(btn => this.#btnsElement.append(btn.element));
-
-    this.#helpElement = document.createElement("p");
-    this.#helpElement.innerHTML = `Help: First code : 0000, seccond: 123456`;
-    this.#element.append(this.#helpElement);
   }
 
   #checkValue = value => {
@@ -71,7 +111,47 @@ export class Game {
 
   #unlocked() {
     alert("WIN, the code was : " + this.#code.join(""));
-    this.setCode("123456");
+    this.setRandomCode();
+  }
+
+  setKeyboard(difficultyBase) {
+    const difficulty = difficultyBase || this.#difficultyKeyboard;
+
+    let btnValues = [..."👍👎😀"];
+
+    if (difficulty === "hard") {
+      btnValues = [..."ABCDEFGHIJKLMNOPQRST"];
+    }
+    if (difficulty === "medium") {
+      btnValues = [..."0123456789"];
+    }
+
+    this.#btnValues = btnValues;
+    this.#createButtons();
+
+    this.setRandomCode();
+  }
+
+  setRandomCode(difficultyBase) {
+    const difficulty = difficultyBase || this.#difficulty;
+    let codeLength = 4;
+    let code = [];
+    let values = this.#btnValues;
+
+    if (difficulty === "hard") {
+      codeLength = 10;
+    }
+    if (difficulty === "medium") {
+      codeLength = 6;
+    }
+
+    for (let i = 0; i < codeLength; i += 1) {
+      code.push(values[Math.floor(Math.random() * values.length)]);
+    }
+
+    console.log("new code : " + code.join(""));
+
+    this.setCode(code);
   }
 
   setCode(code) {
@@ -84,6 +164,18 @@ export class Game {
   destroy() {
     this.#btns.forEach(btn => btn.destroy());
 
-    this.#element.innerHTML = "";
+    while (this.#element.firstChild) {
+      this.#element.firstChild.remove();
+    }
+
+    this.#element = undefined;
+    this.#code = undefined;
+    this.#codeCursor = undefined;
+    this.#btnValues = undefined;
+
+    this.#codeElement = undefined;
+    this.#btnsElement = undefined;
+    this.#btns = undefined;
+    this.#helpElement = undefined;
   }
 }

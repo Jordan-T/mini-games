@@ -1,7 +1,8 @@
 import "./styles.css";
 
-import { Game } from "./games/unlocker";
+import { Game as UnlockerGame } from "./games/unlocker";
+import { GamePicker } from "./gamePicker";
 
-let currentGame;
+const games = [{ name: "Unlocker", Game: UnlockerGame }];
 
-currentGame = new Game(document.getElementById("game"));
+new GamePicker(document.getElementById("app"), games);

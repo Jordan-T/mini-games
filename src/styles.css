@@ -1,3 +1,14 @@
 body {
   font-family: sans-serif;
 }
+
+.c-gamePicker__leave {
+  display: none;
+}
+
+.c-gamePicker--playing .c-gamePickerBtn {
+  display: none;
+}
+.c-gamePicker--playing .c-gamePicker__leave {
+  display: inline-block;
+}

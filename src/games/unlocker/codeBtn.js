@@ -16,4 +16,8 @@ export class CodeBtn {
   #addEvents() {
     this.element.addEventListener("click", this.#onClick, true);
   }
+
+  destroy() {
+    this.element.removeEventListener("click", this.#onClick, true);
+  }
 }
