@@ -1,4 +1,5 @@
 import { CodeBtn } from "./codeBtn";
+import { CodeIndicator } from "./codeIndicator";
 
 export class Game {
   #element;
@@ -8,7 +9,7 @@ export class Game {
   #difficulty = "easy";
   #difficultyKeyboard = "medium";
 
-  #codeElement;
+  #codeIndicator;
   #btnsElement;
   #btns;
   #helpElement;
@@ -50,8 +51,7 @@ export class Game {
     });
     this.#element.append(this.#actionsElement);
 
-    this.#codeElement = document.createElement("div");
-    this.#element.append(this.#codeElement);
+    this.#codeIndicator = new CodeIndicator(this.#element);
 
     this.#btnsElement = document.createElement("div");
     this.#element.append(this.#btnsElement);
@@ -95,13 +95,7 @@ export class Game {
   };
 
   #updateCodeView() {
-    let text = "";
-
-    for (let i = 0; i < this.#code.length; i += 1) {
-      text += this.#codeCursor > i ? "✓" : "_ ";
-    }
-
-    this.#codeElement.innerText = text;
+    this.#codeIndicator.update(this.#codeCursor, this.#code.length);
   }
 
   #fail() {
@@ -173,7 +167,7 @@ export class Game {
     this.#codeCursor = undefined;
     this.#btnValues = undefined;
 
-    this.#codeElement = undefined;
+    this.#codeIndicator = undefined;
     this.#btnsElement = undefined;
     this.#btns = undefined;
     this.#helpElement = undefined;
